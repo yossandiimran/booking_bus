@@ -139,11 +139,19 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="bus-form">Nama Pemesan</label>
-                        <input type="text" name="nama" class="form-control" id="bus-form" placeholder="Masukan nama anda" required/>
+                        <input type="text" name="nama_pelanggan" class="form-control" id="bus-form" placeholder="Masukan nama anda" required/>
                     </div>
                     <div class="form-group">
                         <label for="bus-form">Nomor Hp</label>
-                        <input type="number" name="nama" class="form-control" id="bus-form" placeholder="Masukan nama anda" required/>
+                        <input type="number" name="kontak_pelanggan" class="form-control" id="bus-form" placeholder="Masukan Kontak anda" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="bus-form">Tanggal Berangkat</label>
+                        <input type="date" name="tgl_berangkat" class="form-control" id="bus-form" value="{{ $formData['tgl_berangkat'] }}" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="bus-form">Tanggal Kembali</label>
+                        <input type="date" name="tgl_kembali" class="form-control" id="bus-form" value="{{ $formData['tgl_kembali'] }}" required/>
                     </div>
                 </div>
                 <div class="modal-footer">
