@@ -1,0 +1,32 @@
+.btn-md {
+    padding: .5rem 1.2rem;
+}
+.hidden {
+    display: none !important;
+}
+.text-bold {
+    font-weight: 600 !important;
+}
+.btn-custom1 {
+    color: white !important;
+    background-color: #8d9498  !important;
+    border-color: #8d9498  !important;
+}
+.btn-custom1:hover {
+    background-color: #727272 !important;
+    border-color: #727272 !important;
+}
+.datepicker.datepicker-dropdown {
+    border: 1px solid #c1c1c1;
+}
+.datepicker td, .datepicker th {
+    min-width: 30px !important;
+    height: 30px !important;
+    font-size: 14px;
+}
+.datepicker-days {
+    padding: 3px 5px;
+}
+.btn-primary:disabled, .btn-primary:focus, .btn-primary:hover > a:focus, .btn-primary:hover > a:hover {
+    color: white !important;
+}
