@@ -218,6 +218,8 @@
                                         <td align="right">${formatRupiah(busTarif)}</td>
                                         <td align="center"><button class="btn btn-danger btn-sm remove-row" type="button"><span class="fa fa-trash"></span></button>
                                             <input type="hidden" name="idBus[]" id="idBus[]" value="${selectedOption.val()}">
+                                            <input type="hidden" name="tarifBus[]" id="tarifBus[]" value="${busTarif}">
+                                            <input type="hidden" name="namaBus[]" id="namaBus[]" value="${busName}">
                                         </td>
                                     </tr>`;
                         $('#bodyListBus').append(newRow);
@@ -245,11 +247,24 @@
                 var tgl_berangkat = $("#tgl_berangkat-form").val();
                 var tgl_kembali = $("#tgl_kembali-form").val();
                 var idBusArray = [];
+                var tarifBusArr = [];
+                var nameBusArr = [];
 
                 $('input[name="idBus[]"]').each(function() {
                     var idBusValue = $(this).val();
                     idBusArray.push(idBusValue);
                 });
+
+                $('input[name="tarifBus[]"]').each(function() {
+                    var tarifBusVal = $(this).val();
+                    tarifBusArr.push(tarifBusVal);
+                });
+
+                $('input[name="namaBus[]"]').each(function() {
+                    var busValue = $(this).val();
+                    nameBusArr.push(busValue);
+                });
+
 
                 var headers = { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') };
     
@@ -258,7 +273,9 @@
                     kontak_pelanggan: kontak_pelanggan,
                     tgl_berangkat: tgl_berangkat,
                     tgl_kembali: tgl_kembali,
-                    idBus: idBusArray 
+                    idBus: idBusArray ,
+                    tarifBus: tarifBusArr,
+                    nameBus: nameBusArr 
                 };
 
                 if (nama_pelanggan.trim() === '' || kontak_pelanggan.trim() === '' || 
@@ -285,18 +302,34 @@
                             className : 'btn btn-success'
                         }
                     }
-                }).then((willDelete) => {
-                    if (willDelete) {
+                }).then((willClear) => {
+                    if (willClear) {
                         $.ajax({
                             type: "POST",
                             url: "{{route('createTransaksi')}}",
                             headers: headers,
                             data: postData,
                             success: function(response) {
-                                console.log("Sukses:", response);
+                                $('#formBookingModal').modal('toggle')
+                                swal({
+                                    title: "Booking Sukses",
+                                    text: "Harap Konfirmasi Melalui Whatsapp Admin Kami !",
+                                    icon: "success",
+                                    buttons:{
+                                        confirm: {
+                                            text : 'Konfirmasi',
+                                            className : 'btn btn-success'
+                                        }
+                                    }
+                                }).then((willClear) => {
+                                    prosesSubmitCekBooking(response.data, postData)
+                                });
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error:", error);
+                                swal({
+                                    title: "Kesalahan saat memproses data !",
+                                    icon: "warning",
+                                })
                             }
                         });
                     }
@@ -307,42 +340,41 @@
             function openModalData(data){
                 console.log(data)
                 $('#formBookingModal').modal('toggle')
-
             }
 
-            // Fungsi Booking Langsung Kirim Ke Wa
-            function prosesSubmitCekBooking(){
+            function prosesSubmitCekBooking(data, rawData){
                 const $form = $("#send-message-whatsapp");
 
                 const phone = '6281224580919';
 
-                let data = {}
                 $form.serializeArray().forEach(v => data[v.name] = v.value)
 
+                var grandTotal = 0;
+                for(var i = 0 ; i < rawData.tarifBus.length; i++){
+                    grandTotal = grandTotal + parseInt(rawData.tarifBus[i])
+                }
+
                 const text = `*Formulir Booking Bus*
-A.n : Yossandi Imran Prihartanto
-No. HP : 081224580919
-ID Booking : BK001
+                
+A.n : ${data.nama_pelanggan}
+No. HP : ${data.kontak_pelanggan}
+ID Booking : ${data.kode_booking}
 
 ============================
-*Tujuan* : ${data.lokasi}
+*Tujuan* : ${$("#lokasi").val()}   
 *Tgl Berangkat* : ${data.tgl_berangkat}
 *Tgl Kembali* : ${data.tgl_kembali}
-*Bus* : ${data.bus}
-*Jumlah Seat* : ${data.jumlahSeat}
+*Bus* : ${rawData.nameBus}
+*Harga* : Rp. ${formatRupiah(grandTotal)}
 ============================
 
 `;
-
                 // const action = "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
                 // console.log(action)
-
                 const action = "https://web.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(text.trim());
                 window.open(action, '_blank');
 
             }
-
         </script>             
-
 </body>
 </html>

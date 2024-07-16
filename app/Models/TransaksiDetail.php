@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransaksiDetail extends Model
 {
-    protected $table = 'transaksi';
+    protected $table = 'transaksi_detail';
 
     protected $guarded = [];
 

@@ -9,6 +9,8 @@ use App\Models\MasterTempat;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use DB;
+use DateTime;
 use DataTables;
 use Validator;
 
@@ -41,7 +43,62 @@ class FrontEndController extends Controller
     }
 
     public function createTransaksi(Request $req){
-       dd($req->all());
+        DB::beginTransaction();
+
+        try{
+            $kode = $this->generateBookingCode();
+            $dt = new DateTime();
+            $trx = Transaksi::create([
+                'kode_booking' => $kode,
+                'tgl_booking' => $dt->format('Y-m-d'),
+                'tgl_berangkat' => $req->tgl_berangkat,
+                'tgl_kembali' => $req->tgl_kembali,
+                'nama_pelanggan' => $req->nama_pelanggan,
+                'kontak_pelanggan' => $req->kontak_pelanggan,
+                'status_booking' => 1,
+            ]);
+
+            foreach($req->idBus as $key => $bus){
+                $trxDetail = TransaksiDetail::create([
+                    'kode_booking' => $kode,
+                    'id_bus' => $bus,
+                    'tarif' => $req->tarifBus[$key]
+                ]);
+            }
+
+            DB::commit();
+            
+            return $this->sendResponse($trx, 'Transaksi berhasil dibuat.');
+        }catch(\Throwable $err){
+            DB::rollback();
+            return $this->sendError('Kesalahan sistem saat proses login, silahkan hubungi admin.');
+        }
+    }
+
+    function generateBookingCode() {
+        // Prefix
+        $prefix = "BK";
+    
+        // Tanggal saat ini
+        $today = new DateTime();
+        $day = $today->format('d');
+        $month = $today->format('m');
+        $year = $today->format('y');
+    
+        // Tanggal dalam format ddmmyy
+        $datePart = $day . $month . $year;
+    
+        // Karakter acak
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomChars = '';
+        for ($i = 0; $i < 4; $i++) {
+            $randomChars .= $characters[rand(0, strlen($characters) - 1)];
+        }
+    
+        // Menggabungkan semuanya
+        $bookingCode = $prefix . $datePart . $randomChars;
+    
+        return $bookingCode;
     }
 
 }

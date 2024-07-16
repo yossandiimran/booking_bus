@@ -21,7 +21,7 @@ class CreateTransaksi extends Migration
             $table->timestamp('tgl_kembali');
             $table->string('nama_pelanggan');
             $table->string('kontak_pelanggan');
-            $table->timestamp('status_booking');
+            $table->string('status_booking');
             $table->timestamps();
         });
     }
