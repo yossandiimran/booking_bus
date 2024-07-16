@@ -7,6 +7,7 @@ Auth::routes(['register' => false]);
 Route::get('/', 'FrontEndController@index')->name('index');
 Route::get('/fe', 'FrontEndController@index')->name('fe');
 Route::post('/prosesFormFe', 'FrontEndController@prosesFormFe')->name('prosesFormFe');
+Route::post('/createTransaksi', 'FrontEndController@createTransaksi')->name('createTransaksi');
 
 Route::get('/admin', function () { return redirect('admin/beranda'); });
 Route::get('home', function () { return redirect('admin/beranda'); })->name('home');

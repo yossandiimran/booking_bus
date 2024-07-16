@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\MasterBus;
 use App\Models\MasterTempat;
+use App\Models\Transaksi;
+use App\Models\TransaksiDetail;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use DataTables;
 use Validator;
@@ -28,7 +30,7 @@ class FrontEndController extends Controller
         $data['bus'] = MasterBus::where('type_bus', $req->bus)
         ->where('jumlah_kursi', '>=', $req->jumlahSeat)
         ->where(function ($query) use ($req) {
-            $query->whereDate('status', '<', $req->tgl_berangkat)
+            $query->whereDate('status', '!=', $req->tgl_berangkat)
                   ->orWhereNull('status');
         })
         ->get();
@@ -36,6 +38,10 @@ class FrontEndController extends Controller
         $data['formData'] = $req->all();
         return view('frontend.cekbus', $data);
 
+    }
+
+    public function createTransaksi(Request $req){
+       dd($req->all());
     }
 
 }

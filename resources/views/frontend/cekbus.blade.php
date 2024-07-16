@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Booking Bus</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
@@ -11,7 +12,18 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/slick/slick.css')}}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/slick/slick-theme.css')}}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/frontend/css/datepicker.css')}}"/>
-    <link rel="stylesheet" href="{{ asset('assets/frontend/css/tooplate-style.css')}}">                          
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/tooplate-style.css')}}">
+    <style>
+       .swal-footer {
+            text-align: center;
+            padding-top: 13px;
+            margin-top: 13px;
+            padding: 13px 16px;
+            border-radius: inherit;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }    
+    </style>                        
 </head>
 
     <body>
@@ -130,51 +142,173 @@
         <div class="modal fade bd-example-modal-xl" id="formBookingModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Form Booking</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="bus-form">Nama Pemesan</label>
-                        <input type="text" name="nama_pelanggan" class="form-control" id="bus-form" placeholder="Masukan nama anda" required/>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Form Booking</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="bus-form">Nomor Hp</label>
-                        <input type="number" name="kontak_pelanggan" class="form-control" id="bus-form" placeholder="Masukan Kontak anda" required/>
-                    </div>
-                    <div class="form-group">
-                        <label for="bus-form">Tanggal Berangkat</label>
-                        <input type="date" name="tgl_berangkat" class="form-control" id="bus-form" value="{{ $formData['tgl_berangkat'] }}" required/>
-                    </div>
-                    <div class="form-group">
-                        <label for="bus-form">Tanggal Kembali</label>
-                        <input type="date" name="tgl_kembali" class="form-control" id="bus-form" value="{{ $formData['tgl_kembali'] }}" required/>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">cancel</button>
-                    <button type="button" class="btn btn-success">Booking</button>
-                </div>
+                    <form id="formBooking">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="bus-form">Nama Pemesan</label>
+                                <input type="text" name="nama_pelanggan" class="form-control" id="nama_pelanggan-form" placeholder="Masukan nama anda" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-form">Nomor Hp</label>
+                                <input type="number" name="kontak_pelanggan" class="form-control" id="kontak_pelanggan-form" placeholder="Masukan Kontak anda" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-form">Tanggal Berangkat</label>
+                                <input type="date" name="tgl_berangkat" class="form-control" id="tgl_berangkat-form" value="{{ $formData['tgl_berangkat'] }}" required readonly/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-form">Tanggal Kembali</label>
+                                <input type="date" name="tgl_kembali" class="form-control" id="tgl_kembali-form" value="{{ $formData['tgl_kembali'] }}" required readonly/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-form">Pilih Bus</label>
+                                <select name="busDummySelect" class="form-control" id="busDummySelect">
+                                    <option value="">Pilih Bus</option>
+                                    @foreach($bus as $bs)
+                                    <option value="{{ $bs->id }}" data-tarif="{{ $bs->tarif }}" >{{ $bs->bus }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label for="table-bus">Bus yang dipilih</label>
+                                <table class="table table-border">
+                                    <thead>
+                                        <td align="left"><b>Bus</b></td>
+                                        <td align="right"><b>Tarif</b></td>
+                                        <td align="center" width="5"><b>#</b><td>
+                                    </thead>
+                                    <tbody id="bodyListBus">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">cancel</button>
+                            <button type="button" onclick="bookingNow()" class="btn btn-success">Booking</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        
+
         <!-- load JS files -->
         <script src="{{ asset('assets/frontend/js/jquery-1.11.3.min.js')}}"></script>          
         <script src="{{ asset('assets/frontend/js/popper.min.js')}}"></script>                  
         <script src="{{ asset('assets/frontend/js/bootstrap.min.js')}}"></script>               
         <script src="{{ asset('assets/frontend/js/jquery.singlePageNav.min.js')}}"></script>     
-        <script src="{{ asset('assets/frontend/slick/slick.min.js')}}"></script>                 
+        <script src="{{ asset('assets/frontend/slick/slick.min.js')}}"></script> 
+        <script src="{{ asset('template/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
         <script>
+
+            $(document).ready(function() {
+                $('#busDummySelect').on('change', function() {
+                    var selectedOption = $(this).find('option:selected');
+                    var busName = selectedOption.text();
+                    var busTarif = selectedOption.data('tarif');
+                    if(busName && busTarif) {
+                        var newRow = `<tr>
+                                        <td align="left">${busName}</td>
+                                        <td align="right">${formatRupiah(busTarif)}</td>
+                                        <td align="center"><button class="btn btn-danger btn-sm remove-row" type="button"><span class="fa fa-trash"></span></button>
+                                            <input type="hidden" name="idBus[]" id="idBus[]" value="${selectedOption.val()}">
+                                        </td>
+                                    </tr>`;
+                        $('#bodyListBus').append(newRow);
+                        selectedOption.prop('disabled', true);
+                        $(this).val('');
+                    }
+                });
+
+                $(document).on('click', '.remove-row', function() {
+                    var busName = $(this).closest('tr').find('td:first-child').text();
+                    $('#busDummySelect option').filter(function() {
+                        return $(this).text() === busName;
+                    }).prop('disabled', false);
+                    $(this).closest('tr').remove();
+                });
+            });
+
+            function formatRupiah(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            function bookingNow(){
+                var nama_pelanggan = $("#nama_pelanggan-form").val();
+                var kontak_pelanggan = $("#kontak_pelanggan-form").val();
+                var tgl_berangkat = $("#tgl_berangkat-form").val();
+                var tgl_kembali = $("#tgl_kembali-form").val();
+                var idBusArray = [];
+
+                $('input[name="idBus[]"]').each(function() {
+                    var idBusValue = $(this).val();
+                    idBusArray.push(idBusValue);
+                });
+
+                var headers = { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') };
+    
+                var postData = {
+                    nama_pelanggan: nama_pelanggan,
+                    kontak_pelanggan: kontak_pelanggan,
+                    tgl_berangkat: tgl_berangkat,
+                    tgl_kembali: tgl_kembali,
+                    idBus: idBusArray 
+                };
+
+                if (nama_pelanggan.trim() === '' || kontak_pelanggan.trim() === '' || 
+                tgl_berangkat.trim() === '' || tgl_kembali.trim() === '' || idBusArray.length === 0) {
+                    swal({
+                        title: "Masih ada form yang belum diisi",
+                        icon: "warning",
+                    })
+                    return;
+                }
+
+                swal({
+                    title: "Lanjutin Prosesnya?",
+                    text: "cek lagi data nya, sebelum lanjut booking!",
+                    icon: "warning",
+                    buttons:{
+                        cancel: {
+                            visible: true,
+                            text : 'cek lagi deh',
+                            className: 'btn btn-danger'
+                        },
+                        confirm: {
+                            text : 'Udah bener nih',
+                            className : 'btn btn-success'
+                        }
+                    }
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{route('createTransaksi')}}",
+                            headers: headers,
+                            data: postData,
+                            success: function(response) {
+                                console.log("Sukses:", response);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error:", error);
+                            }
+                        });
+                    }
+                });
+               
+            }            
+
             function openModalData(data){
                 console.log(data)
                 $('#formBookingModal').modal('toggle')
 
             }
-
 
             // Fungsi Booking Langsung Kirim Ke Wa
             function prosesSubmitCekBooking(){

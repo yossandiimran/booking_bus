@@ -21,7 +21,7 @@ class CreateMasterBus extends Migration
             $table->integer('tarif');
             $table->text('foto');
             $table->string('type_bus');
-            $table->timestamps('status')->nullable();
+            $table->date('status')->nullable();
             $table->text('keterangan')->nullable();
             $table->integer('id_sopir');
             $table->timestamps();

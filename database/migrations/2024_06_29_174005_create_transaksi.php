@@ -16,12 +16,11 @@ class CreateTransaksi extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id();
             $table->string('kode_booking');
-            $table->string('id_tempat');
             $table->timestamp('tgl_booking');
             $table->timestamp('tgl_berangkat');
             $table->timestamp('tgl_kembali');
             $table->string('nama_pelanggan');
-            $table->timestamp('kontak_pelanggan');
+            $table->string('kontak_pelanggan');
             $table->timestamp('status_booking');
             $table->timestamps();
         });

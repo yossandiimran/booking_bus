@@ -16,7 +16,7 @@ class CreateMasterTempat extends Migration
         Schema::create('master_tempat', function (Blueprint $table) {
             $table->id();
             $table->string('nama_tempat');
-            $table->string('keterangan')->nullable();
+            $table->text('keterangan')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
         });
