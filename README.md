@@ -1,7 +1,7 @@
-# WMS Prototype
+# Booking Bus Prototype
 
 - Laravel Version 8.0
-- Aplikasi pengelolaan Gudang
+- Aplikasi Booking Bus
 
 # How to Use 
 - composer install
