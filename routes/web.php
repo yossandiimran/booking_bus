@@ -31,11 +31,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin','mid
         });
         // Master Sopir
         Route::group(['prefix' => 'sopir', 'as' => 'sopir.','middleware' => ['permission:1']], function () {
-            Route::get('/', 'MastersopirController@index')->name('index');
-            Route::post('detail', 'MastersopirController@detail')->name('detail');
-            Route::post('store', 'MastersopirController@store')->name('store');
-            Route::post('scopeData', 'MastersopirController@scopeData')->name('scopeData');
-            Route::post('destroy', 'MastersopirController@destroy')->name('destroy');
+            Route::get('/', 'MasterSopirController@index')->name('index');
+            Route::post('detail', 'MasterSopirController@detail')->name('detail');
+            Route::post('store', 'MasterSopirController@store')->name('store');
+            Route::post('scopeData', 'MasterSopirController@scopeData')->name('scopeData');
+            Route::post('destroy', 'MasterSopirController@destroy')->name('destroy');
         });
          // Master Tempat
          Route::group(['prefix' => 'tempat', 'as' => 'tempat.','middleware' => ['permission:1']], function () {
