@@ -29,14 +29,26 @@ class TransaksiController extends Controller
         return DataTables::of($data)
                 ->addIndexColumn()
                 ->removeColumn('id')
+                ->addColumn('status_booking', function($val) {
+                    if($val->status_booking == "1"){
+                        return 'New';
+                    }else if($val->status == "2"){
+                        return 'Proses';
+                    }else if($val->status =="3"){
+                        return 'Batal';
+                    }else if($val->status =="4"){
+                        return 'Selesai';
+                    }
+                })
                 ->addColumn('action', function($val) {
-                    $key = encrypt("barang".$val->id);
+                    $key = encrypt("transaksi".$val->id);
                     return '<div class="btn-group">'.
-                                '<button class="btn btn-warning btn-sm btn-edit" data-key="'.$key.'" title="Ubah Data"><i class="fas fa-pen"></i></button>'.
-                                '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>'.
+                                '<button class="btn btn-primary btn-sm btn-primary" data-key="'.$key.'" title="Acc"><i class="fas fa-check"></i></button>'.
+                                '<button class="btn btn-danger btn-sm btn-danger" data-key="'.$key.'" title="Cancel"><i class="fas fa-wxit-close"></i></button>'.
+                                '<button class="btn btn-warning btn-sm btn-warning" data-key="'.$key.'" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>'.
                             '</div>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['actions', 'status_booking'])
                 ->make(true);
     }
 

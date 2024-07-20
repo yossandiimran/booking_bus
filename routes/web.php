@@ -63,7 +63,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin','mid
     Route::group(['prefix' => 'transaksi', 'namespace' => 'Transaksi', 'as' => 'transaksi.','middleware' => ['permission:1,2']], function () {
         // Transaksi
         Route::get('/', 'TransaksiController@index')->name('index');
-        Route::post('store', 'TransaksiController@store')->name('store');
+        Route::post('action', 'TransaksiController@store')->name('store');
         Route::post('detail', 'TransaksiController@detail')->name('detail');
         Route::post('scopeData', 'TransaksiController@scopeData')->name('scopeData');
         Route::post('destroy', 'TransaksiController@destroy')->name('destroy');

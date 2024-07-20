@@ -81,7 +81,7 @@
                 { data: "DT_RowIndex", name: "DT_RowIndex", searchable: "false", orderable: "false" },
                 { data: "kode_booking", name: "kode_booking" },
                 { data: "nama_pelanggan", name: "nama_pelanggan" },
-                { data: "tanggal_booking", name: "tanggal_booking" },
+                { data: "tgl_booking", name: "tgl_booking" },
                 { data: "status_booking", name: "status_booking" },
                 { data: "action", name: "action", searchable: "false", orderable: "false" }
             ],
