@@ -221,7 +221,7 @@
             let key = $(this).data("key");
             swal({
                 title: "Apakah anda yakin?",
-                text: "Transaksi akan disetujui",
+                text: "Transaksi akan diproses",
                 icon: "success",
                 buttons:{
                     cancel: {
@@ -238,9 +238,52 @@
                 if (willDelete) {
                     notifLoading("Jangan tinggalkan halaman ini sampai proses penghapusan selesai !");
                     $.ajax({
-                        url: "{{ route('admin.transaksi.destroy') }}",
+                        url: "{{ route('admin.transaksi.updateStatus') }}",
                         type: "POST",
-                        data: {key:key},
+                        data: {key:key, status:'2'},
+                        success:function(res){
+                            notif("success","fas fa-check","Notifikasi Progress",res.message,"done");
+                            dt.ajax.reload(null, false);
+                        },
+                        error:function(err, status, message){
+                            response = err.responseJSON;
+                            message = (typeof response != "undefined") ? response.message : message;
+                            notif("danger","fas fa-exclamation","Notifikasi Error",message,"error");
+                        },
+                        complete:function(){
+                            setTimeout(() => {
+                                loadNotif.close();
+                            }, 1000);
+                        }
+                    });
+                }
+            });
+        });
+
+        $("body").on("click",".btn-selesai",function(){
+            let key = $(this).data("key");
+            swal({
+                title: "Apakah anda yakin?",
+                text: "Transaksi sudah selesai",
+                icon: "success",
+                buttons:{
+                    cancel: {
+                        visible: true,
+                        text : 'Batal',
+                        className: 'btn btn-danger'
+                    },
+                    confirm: {
+                        text : 'Selesai',
+                        className : 'btn btn-primary'
+                    }
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    notifLoading("Jangan tinggalkan halaman ini sampai proses penghapusan selesai !");
+                    $.ajax({
+                        url: "{{ route('admin.transaksi.updateStatus') }}",
+                        type: "POST",
+                        data: {key:key, status:'4'},
                         success:function(res){
                             notif("success","fas fa-check","Notifikasi Progress",res.message,"done");
                             dt.ajax.reload(null, false);
@@ -281,9 +324,9 @@
                 if (willDelete) {
                     notifLoading("Jangan tinggalkan halaman ini sampai proses penghapusan selesai !");
                     $.ajax({
-                        url: "{{ route('admin.transaksi.destroy') }}",
+                        url: "{{ route('admin.transaksi.updateStatus') }}",
                         type: "POST",
-                        data: {key:key},
+                        data: {key:key, status:'3'},
                         success:function(res){
                             notif("success","fas fa-check","Notifikasi Progress",res.message,"done");
                             dt.ajax.reload(null, false);

@@ -67,6 +67,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin','mid
         Route::post('detail', 'TransaksiController@detail')->name('detail');
         Route::post('scopeData', 'TransaksiController@scopeData')->name('scopeData');
         Route::post('destroy', 'TransaksiController@destroy')->name('destroy');
+        Route::post('updateStatus', 'TransaksiController@updateStatus')->name('updateStatus');
         // Report
         Route::get('report', 'ReportController@index')->name('report');
     });

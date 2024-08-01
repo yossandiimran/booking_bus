@@ -33,23 +33,41 @@ class TransaksiController extends Controller
                 ->removeColumn('id')
                 ->addColumn('status_booking', function($val) {
                     if($val->status_booking == "1"){
-                        return 'New';
-                    }else if($val->status == "2"){
-                        return 'Proses';
-                    }else if($val->status =="3"){
-                        return 'Batal';
-                    }else if($val->status =="4"){
-                        return 'Selesai';
+                        return '<button class="btn btn-sm btn-primary"><i class="fas fa-info"></i> Baru</button>';
+                    }else if($val->status_booking == "2"){
+                        return '<button class="btn btn-sm btn-warning"><i class="fas fa-clock"></i> Proses</button>';
+                    }else if($val->status_booking =="3"){
+                        return '<button class="btn btn-sm btn-danger"><i class="fas fa-times"></i> Batal</button>';
+                    }else if($val->status_booking =="4"){
+                        return '<button class="btn btn-sm btn-success"><i class="fas fa-check"></i> Selesai</button>';
                     }
                 })
                 ->addColumn('action', function($val) {
                     $key = encrypt("transaksi".$val->id);
-                    return '<div class="btn-group">'.
-                                '<button class="btn btn-success btn-sm btn-acc" data-key="'.$key.'" title="Terima"><i class="fas fa-check"></i></button>'.
-                                '<button class="btn btn-warning btn-sm btn-cancel" data-key="'.$key.'" title="Batalkan"><i class="fas fa-ban"></i></button>'.
-                                '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
-                                '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
-                            '</div>';
+                    if($val->status_booking == "1"){
+                        return '<div class="btn-group">'.
+                            '<button class="btn btn-primaruy btn-sm btn-acc" data-key="'.$key.'" title="Proses"><i class="fas fa-clock"></i></button>'.
+                            '<button class="btn btn-warning btn-sm btn-cancel" data-key="'.$key.'" title="Batalkan"><i class="fas fa-ban"></i></button>'.
+                            '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
+                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
+                        '</div>';
+                    }else if($val->status_booking == "2"){
+                        return '<div class="btn-group">'.
+                            '<button class="btn btn-success btn-sm btn-selesai" data-key="'.$key.'" title="Selesai"><i class="fas fa-check"></i></button>'.
+                            '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
+                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
+                        '</div>';
+                    }else if($val->status_booking =="3"){
+                        return '<div class="btn-group">'.
+                            '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
+                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
+                        '</div>';
+                    }else if($val->status_booking =="4"){
+                        return '<div class="btn-group">'.
+                            '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
+                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
+                        '</div>';
+                    }
                 })
                 ->rawColumns(['action', 'status_booking'])
                 ->make(true);
@@ -163,8 +181,10 @@ class TransaksiController extends Controller
     {
         try {
             // Validation
-            $key = str_replace("barang", "", decrypt($req->key));
-            $data = Masterbarang::findOrFail($key);
+            $key = str_replace("transaksi", "", decrypt($req->key));
+            $data = Transaksi::findOrFail($key);
+            $bookingKode = Transaksi::findOrFail($key)->first();
+            TransaksiDetail::where('kode_booking', $bookingKode->kode_booking)->delete();
             // Delete Process
             $data->delete();
             return $this->sendResponse(null, "Berhasil menghapus data.");
@@ -172,6 +192,21 @@ class TransaksiController extends Controller
             return $this->sendError("Data tidak dapat ditemukan.");
         } catch (\Throwable $err) {
             return $this->sendError("Kesalahan sistem saat proses penghapusan data, silahkan hubungi admin");
+        }
+    }
+
+    public function updateStatus(Request $req){
+        try {
+            // Validation
+            $key = str_replace("transaksi", "", decrypt($req->key));
+            $data = Transaksi::findOrFail($key)->update([
+                'status_booking' => $req->status,
+            ]);
+            return $this->sendResponse(null, "Berhasil memproses data.");
+        } catch (ModelNotFoundException $e) {
+            return $this->sendError("Data tidak dapat ditemukan.");
+        } catch (\Throwable $err) {
+            return $this->sendError("Kesalahan sistem saat proses data, silahkan hubungi admin");
         }
     }
 
