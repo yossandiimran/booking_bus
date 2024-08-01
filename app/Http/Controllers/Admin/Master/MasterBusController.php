@@ -38,10 +38,8 @@ class MasterBusController extends Controller
                 ->addColumn('status', function($val) {
                     if($val->status == null){
                         return '<button class="btn btn-success btn-sm " title="Tersedia"><i class="fas fa-check"></i> Tersedia</button>';
-                    }else if ($val->status == 'Booking'){
-                        return '<button class="btn btn-warning btn-sm " title="Disewa"><i class="fas fa-clock"></i> Dibooking</button>';
                     }else{
-                        return '<button class="btn btn-success btn-sm " title="Disewa"><i class="fas fa-bus"></i> Disewa</button>';
+                        return '<button class="btn btn-warning btn-sm " title="Disewa"><i class="fas fa-bus"></i> Disewa</button>';
                     }
                 })
                 ->addColumn('action', function($val) {

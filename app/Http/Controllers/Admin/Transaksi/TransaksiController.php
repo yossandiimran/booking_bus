@@ -35,7 +35,7 @@ class TransaksiController extends Controller
                     if($val->status_booking == "1"){
                         return '<button class="btn btn-sm btn-primary"><i class="fas fa-info"></i> Baru</button>';
                     }else if($val->status_booking == "2"){
-                        return '<button class="btn btn-sm btn-warning"><i class="fas fa-clock"></i> Proses</button>';
+                        return '<button class="btn btn-sm btn-warning"><i class="fas fa-clock"></i> Dalam Penyewaan</button>';
                     }else if($val->status_booking =="3"){
                         return '<button class="btn btn-sm btn-danger"><i class="fas fa-times"></i> Batal</button>';
                     }else if($val->status_booking =="4"){
@@ -196,18 +196,35 @@ class TransaksiController extends Controller
     }
 
     public function updateStatus(Request $req){
-        try {
+        // try {
             // Validation
             $key = str_replace("transaksi", "", decrypt($req->key));
+
+            $dt = Transaksi::findOrFail($key)->with('detail')->first();
+            $dtb = TransaksiDetail::where('kode_booking', $dt->kode_booking)->get();
+
+            foreach($dtb as $dds){
+                $statBook = $dt->tgl_booking;
+                if($req->status == 4){
+                    $statBook = null;
+                }
+                if($req->status == 3){
+                    $statBook = null;
+                }
+                MasterBus::where('id', $dds->id_bus)->update([
+                    'status' => $statBook,
+                ]);
+            }
+
             $data = Transaksi::findOrFail($key)->update([
                 'status_booking' => $req->status,
             ]);
             return $this->sendResponse(null, "Berhasil memproses data.");
-        } catch (ModelNotFoundException $e) {
-            return $this->sendError("Data tidak dapat ditemukan.");
-        } catch (\Throwable $err) {
-            return $this->sendError("Kesalahan sistem saat proses data, silahkan hubungi admin");
-        }
+        // } catch (ModelNotFoundException $e) {
+        //     return $this->sendError("Data tidak dapat ditemukan.");
+        // } catch (\Throwable $err) {
+        //     return $this->sendError("Kesalahan sistem saat proses data, silahkan hubungi admin");
+        // }
     }
 
 }

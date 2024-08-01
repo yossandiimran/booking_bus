@@ -42,6 +42,9 @@
                                   <li class="nav-item">
                                     <a class="nav-link" href="#tm-section-5">Armada</a>
                                   </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="#tm-section-6">Cek Booking</a>
+                                  </li>
                                 </ul>
                             </div>                            
                         </nav>            
@@ -210,10 +213,10 @@
                             <div class="tm-bg-white tm-p-4">
                                 <form action="index.html" method="post" class="contact-form">
                                     <div class="form-group">
-                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP" required/>
+                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP" value="0812334343434" required/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking" required/>
+                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking" value="BK180724JDNM" required/>
                                     </div>
                                     <button type="button" onclick="checkKodeBooking()" class="btn btn-primary tm-btn-primary">Cek Kode Booking Anda</button>
                                 </form>
@@ -374,7 +377,22 @@
                                 Status Booking : ${getStatusBooking(res.data.status_booking)}
                                 `,
                                 icon: "info",
-                            })
+                                buttons:{
+                                    cancel: {
+                                        visible: true,
+                                        text : 'Close',
+                                        className: 'btn btn-warning'
+                                    },
+                                    confirm: {
+                                        text : 'Hubungi Admin',
+                                        className : 'btn btn-success'
+                                    }
+                                }
+                            }).then((willDelete) => {
+                                if (willDelete) {
+                                    prosesSubmitCekBooking(res.data);
+                                }
+                            });
                         },
                         error:function(err, status, message){
                             response = err.responseJSON;
@@ -407,6 +425,26 @@
                 let options = { day: 'numeric', month: 'long', year: 'numeric' };
                 let formattedDate = new Intl.DateTimeFormat('id-ID', options).format(date);
                 return formattedDate;
+            }
+
+            function prosesSubmitCekBooking(data){
+                const phone = '6281224580919';
+                const text = `*Konfirmasi Booking*
+                
+A.n : ${data.nama_pelanggan}
+No. HP : ${data.kontak_pelanggan}
+ID Booking : ${data.kode_booking}
+
+============================
+Cek Status Booking
+============================
+
+`;
+                // const action = "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
+                // console.log(action)
+                const action = "https://web.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(text.trim());
+                window.open(action, '_blank');
+
             }
 
         </script>  
