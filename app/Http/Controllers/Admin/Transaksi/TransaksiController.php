@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
 use App\Models\TransaksiDetail;
+use App\Models\MasterBus;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use DataTables;
 use Validator;
@@ -17,7 +18,8 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        return view('admin.transaksi.index');
+        $data["bus"] = MasterBus::get();
+        return view('admin.transaksi.index', $data);
     }
 
     /**
@@ -43,12 +45,13 @@ class TransaksiController extends Controller
                 ->addColumn('action', function($val) {
                     $key = encrypt("transaksi".$val->id);
                     return '<div class="btn-group">'.
-                                '<button class="btn btn-primary btn-sm btn-primary" data-key="'.$key.'" title="Acc"><i class="fas fa-check"></i></button>'.
-                                '<button class="btn btn-danger btn-sm btn-danger" data-key="'.$key.'" title="Cancel"><i class="fas fa-wxit-close"></i></button>'.
-                                '<button class="btn btn-warning btn-sm btn-warning" data-key="'.$key.'" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>'.
+                                '<button class="btn btn-success btn-sm btn-acc" data-key="'.$key.'" title="Terima"><i class="fas fa-check"></i></button>'.
+                                '<button class="btn btn-warning btn-sm btn-cancel" data-key="'.$key.'" title="Batalkan"><i class="fas fa-ban"></i></button>'.
+                                '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
+                                '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
                             '</div>';
                 })
-                ->rawColumns(['actions', 'status_booking'])
+                ->rawColumns(['action', 'status_booking'])
                 ->make(true);
     }
 
