@@ -101,4 +101,23 @@ class FrontEndController extends Controller
         return $bookingCode;
     }
 
+    function cekTransaksi(Request $req){
+        try {
+            $data = Transaksi::select('*')
+            ->where('kontak_pelanggan', $req->no_hp)
+            ->where('kode_booking', $req->kode_booking)
+            ->first();
+
+            if($data){
+                return $this->sendResponse($data, "Berhasil mengambil data.");
+            }else{
+                return $this->sendError("Kode Booking tidak dapat ditemukan.");
+            }
+        } catch (ModelNotFoundException $e) {
+            return $this->sendError("Kode Booking tidak dapat ditemukan.");
+        } catch (\Throwable $err) {
+            return $this->sendError("Kesalahan sistem saat proses pengambilan data, silahkan hubungi admin.");
+        }
+    }
+
 }

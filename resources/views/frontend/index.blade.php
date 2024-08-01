@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Booking Bus</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
     <link rel="stylesheet" href="{{ asset('assets/frontend/font-awesome-4.7.0/css/font-awesome.min.css')}}">    
@@ -57,15 +58,15 @@
                                     <div class="form-row tm-search-form-row">
                                         <div class="form-group tm-form-element tm-form-element-100">
                                             <i class="fa fa-map-marker fa-2x tm-form-element-icon"></i>
-                                            <input name="lokasi" type="text" class="form-control" id="lokasi" placeholder="Kemana anda akan pergi ?">
+                                            <input name="lokasi" type="text" class="form-control" id="lokasi" placeholder="Kemana anda akan pergi ?" required>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-50">
                                             <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="tgl_berangkat" type="date" class="form-control" id="tgl_berangkat" placeholder="Tanggal Pergi">
+                                            <input name="tgl_berangkat" type="date" class="form-control" id="tgl_berangkat" placeholder="Tanggal Pergi" required>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-50">
                                             <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="tgl_kembali" type="date" class="form-control" id="tgl_kembali" placeholder="Tanggal Kembali">
+                                            <input name="tgl_kembali" type="date" class="form-control" id="tgl_kembali" placeholder="Tanggal Kembali" required>
                                         </div>
                                     </div>
                                     <div class="form-row tm-search-form-row">
@@ -79,7 +80,7 @@
                                             <i class="fa fa-2x fa-bus tm-form-element-icon"></i>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-4">                                            
-                                            <input name="jumlahSeat" type="number" class="form-control" id="jumlahSeat" placeholder="Jumlah Penumpang">
+                                            <input name="jumlahSeat" type="number" class="form-control" id="jumlahSeat" placeholder="Jumlah Penumpang" required>
                                             <i class="fa fa-user tm-form-element-icon tm-form-element-icon-small"></i>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-4">
@@ -209,12 +210,12 @@
                             <div class="tm-bg-white tm-p-4">
                                 <form action="index.html" method="post" class="contact-form">
                                     <div class="form-group">
-                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP"  required/>
+                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP" required/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking"  required/>
+                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking" required/>
                                     </div>
-                                    <button type="submit" class="btn btn-primary tm-btn-primary">Cek Kode Booking Anda</button>
+                                    <button type="button" onclick="checkKodeBooking()" class="btn btn-primary tm-btn-primary">Cek Kode Booking Anda</button>
                                 </form>
                             </div>                            
                         </div>
@@ -238,7 +239,8 @@
         <script src="{{ asset('assets/frontend/js/popper.min.js')}}"></script>                  
         <script src="{{ asset('assets/frontend/js/bootstrap.min.js')}}"></script>               
         <script src="{{ asset('assets/frontend/js/jquery.singlePageNav.min.js')}}"></script>     
-        <script src="{{ asset('assets/frontend/slick/slick.min.js')}}"></script>                 
+        <script src="{{ asset('assets/frontend/slick/slick.min.js')}}"></script>     
+	    <script src="{{ asset('template/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
         <script>
 
             function prosesSubmitCekBooking(){
@@ -347,6 +349,66 @@
                 $('.tm-current-year').text(new Date().getFullYear());                           
             });
 
+            async function checkKodeBooking(){
+                var noHp = $('#noHp').val()
+                var kodeBooking = $('#kodeBooking').val()
+                var headers = { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') };
+                if(noHp == '' || kodeBooking == ''){
+                    return swal({
+                        title: "Cek kembali form isian",
+                        icon: "warning",
+                    })
+                }else{
+                    $.ajax({
+                        url: "{{ route('cekTransaksi') }}",
+                        type: "POST",
+                        headers: headers,
+                        data: {no_hp: noHp, kode_booking: kodeBooking},
+                        success:function(res){
+                            console.log(res);
+                            return swal({
+                                title: `Kode Booking ${res.data.kode_booking}`,
+                                text: `
+                                Atas Nama : ${res.data.nama_pelanggan}
+                                Tanggal Booking : ${formatTanggal(res.data.tgl_booking)}
+                                Status Booking : ${getStatusBooking(res.data.status_booking)}
+                                `,
+                                icon: "info",
+                            })
+                        },
+                        error:function(err, status, message){
+                            response = err.responseJSON;
+                            message = (typeof response != "undefined") ? response.message : message;
+                            return swal({
+                                title: message,
+                                icon: "warning",
+                            })
+                        },
+                        complete:function(){
+                        }
+                    });
+                }
+            }
+
+            function getStatusBooking(status){
+                if(status == "1"){
+                        return `Baru`;
+                    }else if(status == "2"){
+                        return `Proses`;
+                    }else if(status =="3"){
+                        return `Batal`;
+                    }else if(status =="4"){
+                        return `Selesai`;
+                    }
+            }
+
+            function formatTanggal(dateString) {
+                let date = new Date(dateString);
+                let options = { day: 'numeric', month: 'long', year: 'numeric' };
+                let formattedDate = new Intl.DateTimeFormat('id-ID', options).format(date);
+                return formattedDate;
+            }
+
         </script>  
         
         <script>
@@ -392,7 +454,6 @@
         } 
 
         if($(window).width() < 438){
-            // Slick carousel
             $('.tm-article-carousel').slick({
                 infinite: false,
                 dots: true,
@@ -446,33 +507,24 @@
             if($(window).scrollTop() > 100) {
                 $(".tm-top-bar").addClass("active");
             } else {
-                //remove the background property so it comes transparent again (defined in your css)
             $(".tm-top-bar").removeClass("active");
             }
         });      
 
-        // Google Map
         loadGoogleMap();  
 
-        // Date Picker
-        const pickerCheckIn = datepicker('#inputCheckIn');
-        const pickerCheckOut = datepicker('#inputCheckOut');
-        
-        // Slick carousel
         setCarousel();
         setPageNav();
 
         $(window).resize(function() {
-        setCarousel();
-        setPageNav();
+            setCarousel();
+            setPageNav();
         });
 
-        // Close navbar after clicked
         $('.nav-link').click(function(){
             $('#mainNav').removeClass('show');
         });
 
-        // Control video
         $('.tm-btn-play').click(function() {
             togglePlayPause();                                      
         });
@@ -481,7 +533,6 @@
             togglePlayPause();                                      
         });
 
-        // Update the current year in copyright
         $('.tm-current-year').text(new Date().getFullYear());                           
     });
 </script>   
