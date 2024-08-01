@@ -17,6 +17,7 @@
                                     <th width="40px"><center>No</center></th>
                                     <th><center>Kode Booking</center></th>
                                     <th><center>Customer</center></th>
+                                    <th><center>No Hp</center></th>
                                     <th><center>Tanggal&nbsp;Booking</center></th>
                                     <th width="10%"><center>Status</center></th>
                                     <th width="80px"><center>Aksi</center></th>
@@ -132,6 +133,7 @@
                 { data: "DT_RowIndex", name: "DT_RowIndex", searchable: "false", orderable: "false" },
                 { data: "kode_booking", name: "kode_booking" },
                 { data: "nama_pelanggan", name: "nama_pelanggan" },
+                { data: "kontak_pelanggan", name: "kontak_pelanggan" },
                 { data: "tgl_booking", name: "tgl_booking" },
                 { data: "status_booking", name: "status_booking" },
                 { data: "action", name: "action", searchable: "false", orderable: "false" }
