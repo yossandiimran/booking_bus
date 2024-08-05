@@ -46,6 +46,10 @@ class FrontEndController extends Controller
         DB::beginTransaction();
 
         try{
+            $trxCheck = Transaksi::where('kontak_pelanggan', $req->kontak_pelanggan)->where('status_booking', 1)->orWhere('status_booking', 2)->first();
+            if($trxCheck){
+                return $this->sendError('Tidak dapat melakukan booking, nomor Handphone yang anda masukan sudah terdaftar pada sistem dan sedang dalam proses !.');
+            }
             $kode = $this->generateBookingCode();
             $dt = new DateTime();
             $trx = Transaksi::create([
@@ -71,7 +75,7 @@ class FrontEndController extends Controller
             return $this->sendResponse($trx, 'Transaksi berhasil dibuat.');
         }catch(\Throwable $err){
             DB::rollback();
-            return $this->sendError('Kesalahan sistem saat proses login, silahkan hubungi admin.');
+            return $this->sendError('Kesalahan sistem saat proses pengiriman data, silahkan hubungi admin.');
         }
     }
 

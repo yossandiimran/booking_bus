@@ -40,14 +40,14 @@
                     </span>
                     <h4 class="text-section">Transaksi</h4>
                 </li>
-                <li class="nav-item {{ request()->is('admin/transaksi/') || request()->is('admin/transaksi/*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('admin/transaksi') || request()->is('admin/transaksi/*') ? 'active' : '' }}">
                     <a href="{{ route('admin.transaksi.index') }}">
                         <i class="fas fa-paste"></i>
                         <p>Transaksi</p>
                     </a>
                 </li>
-                <li class="nav-item {{ request()->is('admin/laporan/') || request()->is('admin/laporan/*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.transaksi.index') }}">
+                <li class="nav-item {{ request()->is('admin/laporan') || request()->is('admin/laporan/*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.laporan.index') }}">
                         <i class="fas fa-file-pdf"></i>
                         <p>Laporan</p>
                     </a>

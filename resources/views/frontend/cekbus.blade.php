@@ -325,9 +325,11 @@
                                     prosesSubmitCekBooking(response.data, postData)
                                 });
                             },
-                            error: function(xhr, status, error) {
-                                swal({
-                                    title: "Kesalahan saat memproses data !",
+                            error: function(err, status, message) {
+                                response = err.responseJSON;
+                                message = (typeof response != "undefined") ? response.message : message;
+                                return swal({
+                                    title: message,
                                     icon: "warning",
                                 })
                             }

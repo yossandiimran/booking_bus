@@ -69,7 +69,7 @@
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Form Booking</h5>
+                        <h5 class="modal-title" id="exampleModalCenterTitle">Detail Transaksi</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -86,11 +86,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="bus-form">Tanggal Berangkat</label>
-                                <input type="date" name="tgl_berangkat" class="form-control" id="tgl_berangkat-form" value="" required readonly/>
+                                <input type="text" name="tgl_berangkat" class="form-control" id="tgl_berangkat-form" value="" required readonly/>
                             </div>
                             <div class="form-group">
                                 <label for="bus-form">Tanggal Kembali</label>
-                                <input type="date" name="tgl_kembali" class="form-control" id="tgl_kembali-form" value="" required readonly/>
+                                <input type="text" name="tgl_kembali" class="form-control" id="tgl_kembali-form" value="" required readonly/>
                             </div>
                             <div>
                                 <label for="table-bus">Bus yang dibooking</label>
@@ -98,7 +98,6 @@
                                     <thead>
                                         <td align="left"><b>Bus</b></td>
                                         <td align="right"><b>Tarif</b></td>
-                                        <td align="center" width="5"><b>#</b><td>
                                     </thead>
                                     <tbody id="bodyListBus">
 
@@ -107,8 +106,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">cancel</button>
-                            <button type="button" onclick="bookingNow()" class="btn btn-success">Booking</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">close</button>
                         </div>
                     </form>
                 </div>
@@ -211,7 +209,6 @@
                         },
                         complete:function(){
                             setTimeout(() => {
-                                loadNotif.close();
                             }, 1000);
                         }
                     });
@@ -348,9 +345,42 @@
             });
         });
 
+        function formatRupiah(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         $("body").on("click",".btn-info",function(){
             let key = $(this).data("key");
-            $('#formBookingModal').modal('toggle')
+            $('#bodyListBus').html('');
+            $.ajax({
+                url: "{{ route('admin.transaksi.detail') }}",
+                type: "POST",
+                data: {key:key},
+                success:function(res){
+                    console.log(res);
+                    $('#nama_pelanggan-form').val(res.data.nama_pelanggan)
+                    $('#kontak_pelanggan-form').val(res.data.kontak_pelanggan)
+                    $('#tgl_berangkat-form').val(res.data.tgl_berangkat)
+                    $('#tgl_kembali-form').val(res.data.tgl_kembali)
+                    for(var i =0; i< res.data.detail.length; i++){
+                        var newRow = `<tr>
+                                    <td align="left">${res.data.detail[i].bus.bus}</td>
+                                    <td align="right">Rp. ${formatRupiah(res.data.detail[i].tarif)}</td>
+                                </tr>`;
+                    }
+                   
+                    $('#bodyListBus').append(newRow);
+                    $('#formBookingModal').modal('toggle')
+                },
+                error:function(err, status, message){
+                   
+                },
+                complete:function(){
+                    setTimeout(() => {
+                        loadNotif.close();
+                    }, 1000);
+                }
+            });
         });
     });
 

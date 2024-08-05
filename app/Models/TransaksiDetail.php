@@ -15,4 +15,9 @@ class TransaksiDetail extends Model
     {
         return $this->hasOne(Transaksi::class, 'kode_booking', 'kode_booking');
     }
+
+    public function bus()
+    {
+        return $this->hasOne(MasterBus::class, 'id', 'id_bus');
+    }
 }

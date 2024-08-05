@@ -50,27 +50,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin','mid
 
     // Transaksi route
     Route::group(['prefix' => 'transaksi', 'namespace' => 'Transaksi', 'as' => 'transaksi.','middleware' => ['permission:1,2']], function () {
-        // Master Bus
-        Route::group(['prefix' => 'transaction', 'as' => 'transaction.','middleware' => ['permission:1']], function () {
-            Route::get('/', 'TransaksiController@index')->name('index');
-            Route::post('detail', 'TransaksiController@detail')->name('detail');
-            Route::post('store', 'TransaksiController@store')->name('store');
-            Route::post('scopeData', 'TransaksiController@scopeData')->name('scopeData');
-            Route::post('destroy', 'TransaksiController@destroy')->name('destroy');
-        });
-    });
-
-    // Transaksi Route
-    Route::group(['prefix' => 'transaksi', 'namespace' => 'Transaksi', 'as' => 'transaksi.','middleware' => ['permission:1,2']], function () {
-        // Transaksi
         Route::get('/', 'TransaksiController@index')->name('index');
         Route::post('action', 'TransaksiController@store')->name('store');
         Route::post('detail', 'TransaksiController@detail')->name('detail');
         Route::post('scopeData', 'TransaksiController@scopeData')->name('scopeData');
         Route::post('destroy', 'TransaksiController@destroy')->name('destroy');
         Route::post('updateStatus', 'TransaksiController@updateStatus')->name('updateStatus');
-        // Report
-        Route::get('report', 'ReportController@index')->name('report');
+    });
+
+    // Laporan Route
+    Route::group(['prefix' => 'laporan', 'namespace' => 'Laporan', 'as' => 'laporan.','middleware' => ['permission:1,2']], function () {
+        Route::get('/', 'LaporanController@index')->name('index');
     });
 
 });

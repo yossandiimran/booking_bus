@@ -55,17 +55,14 @@ class TransaksiController extends Controller
                         return '<div class="btn-group">'.
                             '<button class="btn btn-success btn-sm btn-selesai" data-key="'.$key.'" title="Selesai"><i class="fas fa-check"></i></button>'.
                             '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
-                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
                         '</div>';
                     }else if($val->status_booking =="3"){
                         return '<div class="btn-group">'.
                             '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
-                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
                         '</div>';
                     }else if($val->status_booking =="4"){
                         return '<div class="btn-group">'.
                             '<button class="btn btn-primary btn-sm btn-info" data-key="'.$key.'" title="Detail"><i class="fas fa-info"></i></button>'.
-                            '<button class="btn btn-danger btn-sm btn-delete" data-key="'.$key.'" title="Hapus"><i class="fas fa-trash-alt"></i></button>'.
                         '</div>';
                     }
                 })
@@ -102,8 +99,8 @@ class TransaksiController extends Controller
     public function detail(Request $req)
     {
         try {
-            $key = str_replace("barang", "", decrypt($req->key));
-            $data = Masterbarang::select('*')->whereId($key)->with('supplier')->with('gudang')->firstOrFail();
+            $key = str_replace("transaksi", "", decrypt($req->key));
+            $data = Transaksi::select('*')->whereId($key)->with('detail.bus')->firstOrFail();
             return $this->sendResponse($data, "Berhasil mengambil data.");
         } catch (ModelNotFoundException $e) {
             return $this->sendError("Data tidak dapat ditemukan.");
@@ -225,6 +222,11 @@ class TransaksiController extends Controller
         // } catch (\Throwable $err) {
         //     return $this->sendError("Kesalahan sistem saat proses data, silahkan hubungi admin");
         // }
+    }
+
+    public function report(){
+        $data["bus"] = MasterBus::get();
+        return view('admin.transaksi.report', $data);
     }
 
 }
