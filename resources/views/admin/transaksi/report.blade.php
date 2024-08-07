@@ -91,7 +91,7 @@
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${new Date(item.created_at).toLocaleDateString()}</td>
-                                    <td>${item.bus.bus ?? "<i>Bus Sudah Dihapus</i>"}</td>
+                                    <td>${item.bus ? item.bus.bus : "<i>Bus Sudah Dihapus</i>"}</td>
                                     <td>${hitungHari(item.parent.tgl_berangkat, item.parent.tgl_kembali)} hari</td>
                                     <td>${formatRibuan(item.tarif)}</td>
                                     <td>${formatRibuan(hitungHari(item.parent.tgl_berangkat, item.parent.tgl_kembali) * item.tarif)}</td>
