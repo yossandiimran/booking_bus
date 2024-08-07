@@ -61,6 +61,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin','mid
     // Laporan Route
     Route::group(['prefix' => 'laporan', 'namespace' => 'Laporan', 'as' => 'laporan.','middleware' => ['permission:1,2']], function () {
         Route::get('/', 'LaporanController@index')->name('index');
+        Route::get('/getDataLaporan', 'LaporanController@getDataLaporan')->name('getDataLaporan');
     });
 
 });
