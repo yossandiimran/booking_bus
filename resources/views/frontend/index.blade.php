@@ -213,10 +213,10 @@
                             <div class="tm-bg-white tm-p-4">
                                 <form action="index.html" method="post" class="contact-form">
                                     <div class="form-group">
-                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP" value="0812334343434" required/>
+                                        <input type="text" id="noHp" name="noHp" class="form-control" placeholder="Nomor HP" value="" required/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking" value="BK180724JDNM" required/>
+                                        <input type="email" id="kodeBooking" name="kodeBooking" class="form-control" placeholder="Kode Booking" value="" required/>
                                     </div>
                                     <button type="button" onclick="checkKodeBooking()" class="btn btn-primary tm-btn-primary">Cek Kode Booking Anda</button>
                                 </form>
