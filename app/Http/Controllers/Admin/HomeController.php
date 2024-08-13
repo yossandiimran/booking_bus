@@ -31,8 +31,8 @@ class HomeController extends Controller
     {
         $data["trx"] = Transaksi::get();
         $data["laba"] = TransaksiDetail::sum('tarif');
-        $data["bus_disewa"] = count(MasterBus::where('status', null)->get());
-        $data["bus_ready"] = count(MasterBus::whereNotNull('status')->get());
+        $data["bus_ready"] = count(MasterBus::where('status', null)->get());
+        $data["bus_disewa"] = count(MasterBus::whereNotNull('status')->get());
         $data["trx_count"] = count(Transaksi::get());
         $data["sopir_count"] = count(MasterSopir::get());
         
